@@ -1,0 +1,114 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<pthread.h>
+#include<sys/types.h> 
+#include<unistd.h>
+#include<semaphore.h> 
+ int track_var = 0; 
+ int s1=0,s2=0,s3=0; 
+ sem_t lock_var; 
+ 
+int order[4]={}; 
+int o=0;
+struct sharedTable
+{
+ 	int pen;
+ 	int paper;
+ 	int question_paper;
+} ;
+
+ void *sd1(void *arg)
+{
+
+ 	sem_wait(&lock_var); 
+ 	if(s->pen==0 || s->paper==0 || s->question_paper==0)
+ 	{
+ 	 	s->pen-=1;
+	  	struct sharedTable *s = (struct sharedTable*)arg;
+		    	s->pen+=1; 
+ 	 	sem_post(&lock_var);
+ 	 	wait();
+ 	}	
+ 	else	
+ 	{	
+ 	 	if(s1==0)
+ 	 	{
+ 	 	printf("\n\t Student Process 1 completed his task\n") ;
+ 	 	track_var++; 
+		s->pen=0;  
+		s->paper=0;
+ 	 	s->question_paper=0; 
+ 	 	order[o]=1;  	 	
+		o++;  	 	
+		s1=1;
+ 	 	}
+ 	 	else
+ 	 	{
+ 	 	 	printf("\n\t Try Choosing Another option :-\n") ;
+ 	 	}
+ 	}
+ 	sem_post(&lock_var); 
+}
+
+ void *sd2(void *arg)
+{
+ 	sem_wait(&lock_var); 
+	struct sharedTable *s = (struct sharedTable*)arg; 
+ 	s->paper+=1; //Student 2 has got Paper from Starting
+ 	if(s->pen==0||s->paper==0||s->question_paper==0) 
+ 	{ 	
+ 	 	s->paper-=1;
+ 	 	sem_post(&lock_var);
+ 	 	wait();
+ 	}	
+ 	else	
+ 	{	
+ 	 	if(s2==0)
+ 	 	{	
+ 	 	 	printf("\n\t Student Process 2 completed his task\n") ;
+ 	 	 	track_var++;
+ 	 	 	s->pen=0;
+ 	 	 	s->paper=0;
+ 	 	 	s->question_paper=0;
+ 	 	 	order[o]=2;
+ 	 	 	o++;
+ 	 	 	s2=1;
+ 	 	}	
+ 	 	else	
+ 	 	{	
+ 	 	 	printf("\n\t Try Choosing Another option :-\n") ;
+ 	 	}	
+ 	}		
+ 	sem_post( &lock_var);
+}
+ 
+void *sd3(void *arg)
+{
+ 	sem_wait(&lock_var);
+ 	struct sharedTable *s = (struct sharedTable*)arg;
+	s->question_paper+=1; 
+ 	if(s->pen==0||s->paper==0||s->question_paper==0)
+ 	{ 	s->question_paper-=1;
+ 	 	sem_post( &lock_var);
+ 	 	wait();
+ 	}	
+ 	else	
+ 	{	
+ 	 	if(s3==0)
+ 	 	{
+ 	 	printf("\n\t Student Process 3 completed his task\n") ;
+ 	 	track_var++;
+ 	 	s->pen=0;
+ 	 	s->paper=0;
+ 	 	s->question_paper=0;
+ 	 	order[o]=3;
+ 	 	o++;
+ 	 	s3=1;
+ 	 	}
+ 	 	else
+ 	 	{
+ 	 	printf("\n\t Try Choosing Another option :-\n") ;
+ 	 	}
+ 	}	
+ 	sem_post( &lock_var);
+}
